@@ -8,12 +8,12 @@ import geral as gr
 import re
 
 # ---------------- LOCALE ----------------
-try:
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-    if "salvar" not in st.session_state:
-        st.session_state.salvar = False        
-except:
-    locale.setlocale(locale.LC_ALL, 'Portuguese_Brazil.1252')
+# try:
+#     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+#     if "salvar" not in st.session_state:
+#         st.session_state.salvar = False        
+# except:
+#     locale.setlocale(locale.LC_ALL, 'Portuguese_Brazil.1252')
 
 def enviar_whatsapp(numero, mensagem):
     import pywhatkit as kit
