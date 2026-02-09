@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from peewee import MySQLDatabase, PostgresqlDatabase
+from peewee import PostgresqlDatabase
 from cryptography.fernet import Fernet
 
 # Carrega as variáveis do arquivo .env para o ambiente do sistema
