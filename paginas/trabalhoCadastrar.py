@@ -37,7 +37,7 @@ def salvar_trabalho(codigo, dados_form)->bool:
     else:
         # Cria um novo objeto
         trabalho_obj = trb.Trabalho()
-        trabalho_obj.cd_trabalho = 0
+        # trabalho_obj.cd_trabalho = 0
 
     # Atribui os valores vindos do formulário (dados_form é um dicionário)
     trabalho_obj.nm_trabalho = dados_form['nm_trabalho']

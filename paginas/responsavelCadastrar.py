@@ -89,7 +89,7 @@ def salvar_responsavel(codigo, dados_form)->bool:
     else:
         # Cria um novo objeto
         responsavel_obj = resp.Responsavel()
-        responsavel_obj.cd_responsavel = 0
+        # responsavel_obj.cd_responsavel = 0
 
     # Atribui os valores vindos do formulário (dados_form é um dicionário)
     responsavel_obj.nm_responsavel = dados_form['nm_responsavel']
