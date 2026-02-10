@@ -1,13 +1,15 @@
 import streamlit as st
 from datetime import datetime, timedelta
-import pandas as pd
-import locale
+# import pandas as pd
+# import locale
 import geral as gr
 import controller.consultarAgendaController as consultarAgendaController
 import controller.trabalhandoController as trbController
 import controller.trabalhoController as trabalhoController
 from model.trabalhando import Trabalhando
 from streamlit_calendar import calendar
+import requests
+import urllib.parse
 
 
 # ---------------- LOCALE ----------------
@@ -18,14 +20,27 @@ from streamlit_calendar import calendar
 # except:
 #     locale.setlocale(locale.LC_ALL, 'Portuguese_Brazil.1252')
 
+# def enviar_whatsapp(numero, mensagem):
+#     import pywhatkit as kit
+#     kit.sendwhatmsg_instantly(
+#         phone_no=numero,
+#         message=mensagem,
+#         wait_time = 15,
+#         tab_close = True
+#     )    
+
 def enviar_whatsapp(numero, mensagem):
-    import pywhatkit as kit
-    kit.sendwhatmsg_instantly(
-        phone_no=numero,
-        message=mensagem,
-        wait_time = 15,
-        tab_close = True
-    )    
+    # mensagem = urllib.parse.quote(mensagem)
+    # url = (
+    #     "https://api.callmebot.com/whatsapp.php"
+    #     f"?phone={numero}"
+    #     f"&text={mensagem}"
+    #     f"&apikey=SEU_API_KEY"
+    # )
+    # requests.get(url)
+    mensagem_codificada = urllib.parse.quote(mensagem, safe='')
+
+    return f"https://wa.me/55{numero}?text={mensagem_codificada}"
 
 from datetime import datetime, timedelta
 
@@ -283,7 +298,8 @@ if st.session_state.evento_selecionado:
             confirmarCancelamento = col2.button("🔕 Cancelar agendamento", on_click=lambda: st.session_state.update({"confirmarCancelamento": True}))
             remarcarAgenda = col3.button("😬 Remarcar", on_click=lambda: st.session_state.update({"remarcarAgenda": True}))
             if  datetime.fromisoformat(ev['start']) > datetime.now().astimezone():#Só vai enviar mensagem se a data de início da tarefa for maior que a data atual
-                enviarZap = col4.button("📲 WhatsApp", on_click=lambda: st.session_state.update({"enviarZap": True}))
+                # enviarZap = col4.button("📲 WhatsApp", on_click=lambda: st.session_state.update({"enviarZap": True}))
+                enviarZap = col4.button("📲 Gerar WhatsApp", on_click=lambda: st.session_state.update({"enviarZap": True}))
 
             if confirmarExecucao:
                 consultarAgendaController.confirmarExecucao(cd)
@@ -294,12 +310,15 @@ if st.session_state.evento_selecionado:
             elif remarcarAgenda:
                 formulario(cd) 
             elif enviarZap:
-                # import re
+                import re
                 # cliente = re.sub(r"\D", "", consultarAgendaController.getCliente(aux.cd_cliente))
                 cliente = consultarAgendaController.getCliente(aux.cd_cliente)
                 trabalho = trabalhoController.consultartrabalhoGet(aux.cd_trabalho)            
-                enviar_whatsapp(numero='+55'+cliente.ds_telefone,mensagem= 'Olá '+cliente.nm_cliente+', aqui é do *Estúdio Gruta*. Lembrete de '+trabalho.nm_trabalho+' *'+
-                                                                            str(aux.dt_inicio.strftime('%d/%m/%Y'))+' às '+str(aux.dt_inicio.strftime('%H:%M'))+"* 🎯")
+                # enviar_whatsapp(numero='+55'+re.sub(r"\D", "", cliente.ds_telefone),mensagem= 'Olá '+cliente.nm_cliente+', aqui é do *Estúdio Gruta*. Lembrete de '+trabalho.nm_trabalho+' *'+
+                #                                                             str(aux.dt_inicio.strftime('%d/%m/%Y'))+' às '+str(aux.dt_inicio.strftime('%H:%M'))+"* 🎯")
+                envio = enviar_whatsapp(numero= re.sub(r"\D", "", cliente.ds_telefone),mensagem= 'Olá '+cliente.nm_cliente+', aqui é do *Estúdio Gruta*. Lembrete de '+trabalho.nm_trabalho+' *'+
+                                                                            str(aux.dt_inicio.strftime('%d/%m/%Y'))+' às '+str(aux.dt_inicio.strftime('%H:%M'))+"*")
+                st.markdown(f"[📲 Abrir WhatsApp]({envio})", unsafe_allow_html=True)
 
             if "caixaDialogoSimNao" in st.session_state and st.session_state.caixaDialogoSimNao:
                 consultarAgendaController.confirmarCancelamento(cd)
