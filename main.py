@@ -1,9 +1,37 @@
 import streamlit as st;
+import controller.usuarController as usu
 
 
-st.set_page_config(page_title="Agenda", layout="wide")
+if 'authenticated' not in st.session_state:
+    st.session_state['authenticated'] = False
+
+
+def login_page():
+    #Página de login.
+    st.title('Acesso Agenda')
+    with st.form(key="acesso_agenda"):    
+    # if True:
+        input_user = st.text_input(label='Insira seu login:')
+        input_password = st.text_input(label='Insira sua senha',type='password')
+        col1, col2, col3 = st.columns([3, 1, 3])
+        with col2:
+            input_button_submnit = st.form_submit_button(' Enviar ')
+    # ######################################
+        if input_button_submnit:
+            usuario = usu.consultarUsuario(input_user)
+            if usuario == None:   
+                st.success('Usuário ou senha inválidos!', icon="❌")
+            else:                    
+                if usuario.ds_senha == input_password:
+                    st.success('Usuário encontrado!', icon="✅")     
+                    st.session_state['authenticated'] = True
+                    st.session_state['username'] = input_user                       
+                    st.rerun()
+                else:
+                    st.success('Usuário ou senha inválidos!', icon="❌")    
 
 def menu_page():
+    st.set_page_config(page_title="Agenda", layout="wide")
     # st.markdown("""
     # <style>
     # header {visibility: hidden;}
@@ -74,4 +102,11 @@ def menu_page():
 # if st.session_state['authenticated']:
 
 # st.set_page_config(layout="wide")
-menu_page()
+# Lógica principal do aplicativo
+if st.session_state['authenticated']:
+    st.set_page_config(layout="wide")
+    menu_page()
+else:
+    st.set_page_config(layout="centered")
+    login_page()    
+    st.session_state['acessou'] = False
