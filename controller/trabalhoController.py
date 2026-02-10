@@ -68,7 +68,7 @@ def persistir(trabalhoLocal: trabalho.Trabalho):
     try:
         with dtb.db.atomic():
              dtb.db.transaction()
-             if trabalhoLocal.cd_trabalho >= 1:
+             if trabalhoLocal.cd_trabalho != None:
                 trabalhoLocal.save()
              else:
                 trabalhoLocal.save(force_insert=True)

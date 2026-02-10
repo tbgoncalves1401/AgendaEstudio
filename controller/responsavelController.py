@@ -80,7 +80,7 @@ def persistir(responsavelLocal: responsavel.Responsavel):
     try:
         with dtb.db.atomic():
              dtb.db.transaction()
-             if responsavelLocal.cd_responsavel >= 1:
+             if responsavelLocal.cd_responsavel != None:
                 responsavelLocal.save()
              else:
                 responsavelLocal.save(force_insert=True)
