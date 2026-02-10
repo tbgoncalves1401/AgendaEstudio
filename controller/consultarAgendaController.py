@@ -121,28 +121,57 @@ def consultarAgenda(opcao):
 
         from peewee import SQL
 
+        # query = (
+        #     trabalhando.Trabalhando
+        #     .select(
+        #         cliente.nm_cliente,
+        #         trabalh.nm_trabalho,
+        #         responsavel.nm_responsavel,
+        #         trabalhando.Trabalhando.id_status,
+        #         trabalhando.Trabalhando.cd_trabalhando,
+        #         fn.FORMAT(trabalhando.Trabalhando.vl_trabalho, 2).alias('Valor'),
+        #         trabalhando.Trabalhando.dt_inicio.alias('DataInicio'),
+        #         fn.TIMESTAMPADD(
+        #             SQL('HOUR'),
+        #             trabalh.qt_tempo,
+        #             trabalhando.Trabalhando.dt_inicio
+        #         ).alias('DataPrevisaoFim'),
+        #           trabalhando.Trabalhando.cd_trabalhando.alias('Codigo')
+        #     )
+        #     .join(cliente, on=(trabalhando.Trabalhando.cd_cliente == cliente.cd_cliente))
+        #     .join(trabalh, on=(trabalhando.Trabalhando.cd_trabalho == trabalh.cd_trabalho))
+        #     .join(responsavel, on=(trabalhando.Trabalhando.cd_responsavel == responsavel.cd_responsavel))
+        #     # .where(trabalhando.Trabalhando.id_finalizado != True)
+        #     .distinct())
         query = (
             trabalhando.Trabalhando
-            .select(
-                cliente.nm_cliente,
-                trabalh.nm_trabalho,
-                responsavel.nm_responsavel,
-                trabalhando.Trabalhando.id_status,
-                trabalhando.Trabalhando.cd_trabalhando,
-                fn.FORMAT(trabalhando.Trabalhando.vl_trabalho, 2).alias('Valor'),
-                trabalhando.Trabalhando.dt_inicio.alias('DataInicio'),
-                fn.TIMESTAMPADD(
-                    SQL('HOUR'),
-                    trabalh.qt_tempo,
-                    trabalhando.Trabalhando.dt_inicio
-                ).alias('DataPrevisaoFim'),
-                trabalhando.Trabalhando.cd_trabalhando.alias('Codigo')
-            )
+        .select(
+            cliente.nm_cliente,
+            trabalh.nm_trabalho,
+            responsavel.nm_responsavel,
+            trabalhando.Trabalhando.id_status,
+            trabalhando.Trabalhando.cd_trabalhando,
+
+            fn.TO_CHAR(
+                trabalhando.Trabalhando.vl_trabalho,
+                'FM999999990.00'
+            ).alias('Valor'),
+
+            trabalhando.Trabalhando.dt_inicio.alias('DataInicio'),
+
+            (
+                trabalhando.Trabalhando.dt_inicio +
+                (trabalh.qt_tempo * SQL("INTERVAL '1 hour'"))
+            ).alias('DataPrevisaoFim'),
+
+            trabalhando.Trabalhando.cd_trabalhando.alias('Codigo')
+        )
             .join(cliente, on=(trabalhando.Trabalhando.cd_cliente == cliente.cd_cliente))
             .join(trabalh, on=(trabalhando.Trabalhando.cd_trabalho == trabalh.cd_trabalho))
             .join(responsavel, on=(trabalhando.Trabalhando.cd_responsavel == responsavel.cd_responsavel))
             # .where(trabalhando.Trabalhando.id_finalizado != True)
-            .distinct())
+            .distinct())        
+
 
         if filtros:
             query = query.where(*filtros)

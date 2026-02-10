@@ -152,27 +152,30 @@ def formulario(codigo=0):
 def pesquisarAgenda(selecao):
     dados = consultarAgendaController.consultarAgenda(selecao)
 
-    calendar_events = []
-    for item in dados:        
-        titulo = item.get("nm_responsavel")+'-> '+item.get("nm_trabalho")+' para o cliente: '+item.get("nm_cliente")
+    if dados:
+        calendar_events = []
+        for item in dados:        
+            titulo = item.get("nm_responsavel")+'-> '+item.get("nm_trabalho")+' para o cliente: '+item.get("nm_cliente")
 
-        if item.get("id_status") == "C":
-            # titulo = "❌ " + riscar_texto(titulo)
-            titulo = "🔕 " + riscar_texto(titulo)
-        elif item.get("id_status") == "E":
-            titulo = "✔️ " + titulo
+            if item.get("id_status") == "C":
+                # titulo = "❌ " + riscar_texto(titulo)
+                titulo = "🔕 " + riscar_texto(titulo)
+            elif item.get("id_status") == "E":
+                titulo = "✔️ " + titulo
 
-        evento = {
-            "title": titulo,
-            "start": item.get("DataInicio").isoformat(),
-            "end": item.get("DataPrevisaoFim").isoformat(),
-            "id": item.get("cd_trabalhando"),
-            "status":str(item.get("id_status"))
-        }
+            evento = {
+                "title": titulo,
+                "start": item.get("DataInicio").isoformat(),
+                "end": item.get("DataPrevisaoFim").isoformat(),
+                "id": item.get("cd_trabalhando"),
+                "status":str(item.get("id_status"))
+            }
 
-        calendar_events.append(evento)
+            calendar_events.append(evento)
 
-    return calendar_events
+        return calendar_events
+    else:
+        return None
 
 # ---------------- TELA ----------------
 st.title("Consultar agenda")
@@ -211,7 +214,8 @@ agenda = []
 state = None
 if opcao['codigo'] >=1 and st.session_state.pesquisou:
     agenda = pesquisarAgenda(opcao['codigo'])
-    st.session_state.agenda_raw = {ev["id"]: ev for ev in agenda}
+    if agenda:
+        st.session_state.agenda_raw = {ev["id"]: ev for ev in agenda}
 
 if agenda:   
     st.session_state.agenda_raw = {ev["id"]: ev for ev in agenda}
