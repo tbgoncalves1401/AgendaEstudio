@@ -294,8 +294,9 @@ if st.session_state.evento_selecionado:
             elif remarcarAgenda:
                 formulario(cd) 
             elif enviarZap:
-                import re
-                cliente = re.sub(r"\D", "", consultarAgendaController.getCliente(aux.cd_cliente))
+                # import re
+                # cliente = re.sub(r"\D", "", consultarAgendaController.getCliente(aux.cd_cliente))
+                cliente = consultarAgendaController.getCliente(aux.cd_cliente)
                 trabalho = trabalhoController.consultartrabalhoGet(aux.cd_trabalho)            
                 enviar_whatsapp(numero='+55'+cliente.ds_telefone,mensagem= 'Olá '+cliente.nm_cliente+', aqui é do *Estúdio Gruta*. Lembrete de '+trabalho.nm_trabalho+' *'+
                                                                             str(aux.dt_inicio.strftime('%d/%m/%Y'))+' às '+str(aux.dt_inicio.strftime('%H:%M'))+"* 🎯")
