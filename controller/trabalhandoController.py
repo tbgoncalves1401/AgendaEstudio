@@ -30,16 +30,17 @@ def consultaTrabalhoDet(cd):
             .select(
                 cliente.nm_cliente,
                 trabalh.nm_trabalho,
-                fn.FORMAT(trabalhando.Trabalhando.vl_trabalho, 2).alias('Valor'),
+                fn.ROUND(
+                    trabalhando.Trabalhando.vl_trabalho.cast('numeric'), 2
+                ).alias('Valor'),
                 trabalhando.Trabalhando.dt_inicio.alias('DataInicio'),
                 trabalhando.Trabalhando.dt_finalizado.alias('DataFim'),
                 trabalhando.Trabalhando.id_status,
-                trabalhando.Trabalhando.cd_responsavel,                
+                trabalhando.Trabalhando.cd_responsavel,
                 trabalhando.Trabalhando.cd_trabalhando.alias('Codigo')
             )
             .join(cliente, on=(trabalhando.Trabalhando.cd_cliente == cliente.cd_cliente))
             .join(trabalh, on=(trabalhando.Trabalhando.cd_trabalho == trabalh.cd_trabalho))
-            # .where(trabalhando.Trabalhando.id_finalizado != True)
             .distinct()
         )
 
@@ -50,7 +51,6 @@ def consultaTrabalhoDet(cd):
 
         return list(query)
 
-
     except OperationalError as e:
         print(f"❌ Erro ao conectar: {e}")
         return []
@@ -58,6 +58,55 @@ def consultaTrabalhoDet(cd):
     finally:
         if not dtb.db.is_closed():
             dtb.db.close()
+
+
+# def consultaTrabalhoDet(cd):
+#     cliente = cli.Cliente.alias()
+#     trabalh = trb.Trabalho.alias()
+
+#     filtros = []
+
+#     if cd >= 1:
+#         filtros.append(
+#             trabalhando.Trabalhando.cd_trabalhando == cd
+#         )
+
+#     try:
+#         dtb.db.connect(reuse_if_open=True)
+
+#         query = (
+#             trabalhando.Trabalhando
+#             .select(
+#                 cliente.nm_cliente,
+#                 trabalh.nm_trabalho,
+#                 fn.FORMAT(trabalhando.Trabalhando.vl_trabalho, 2).alias('Valor'),
+#                 trabalhando.Trabalhando.dt_inicio.alias('DataInicio'),
+#                 trabalhando.Trabalhando.dt_finalizado.alias('DataFim'),
+#                 trabalhando.Trabalhando.id_status,
+#                 trabalhando.Trabalhando.cd_responsavel,                
+#                 trabalhando.Trabalhando.cd_trabalhando.alias('Codigo')
+#             )
+#             .join(cliente, on=(trabalhando.Trabalhando.cd_cliente == cliente.cd_cliente))
+#             .join(trabalh, on=(trabalhando.Trabalhando.cd_trabalho == trabalh.cd_trabalho))
+#             # .where(trabalhando.Trabalhando.id_finalizado != True)
+#             .distinct()
+#         )
+
+#         if filtros:
+#             query = query.where(*filtros)
+
+#         query = query.order_by(trabalhando.Trabalhando.dt_inicio).dicts()
+
+#         return list(query)
+
+
+#     except OperationalError as e:
+#         print(f"❌ Erro ao conectar: {e}")
+#         return []
+
+#     finally:
+#         if not dtb.db.is_closed():
+#             dtb.db.close()
 
 def consultarTrabalhosPesquisa(flt: list[ger.filtros]):
     cliente = cli.Cliente.alias()
@@ -80,7 +129,9 @@ def consultarTrabalhosPesquisa(flt: list[ger.filtros]):
             .select(
                 cliente.nm_cliente,
                 trabalh.nm_trabalho,
-                fn.FORMAT(trabalhando.Trabalhando.vl_trabalho, 2).alias('Valor'),
+                fn.ROUND(
+                    trabalhando.Trabalhando.vl_trabalho.cast('numeric'), 2
+                ).alias('Valor'),
                 trabalhando.Trabalhando.dt_inicio.alias('DataInicio'),
                 trabalhando.Trabalhando.dt_finalizado.alias('DataFim'),
                 trabalhando.Trabalhando.id_status,
@@ -89,7 +140,6 @@ def consultarTrabalhosPesquisa(flt: list[ger.filtros]):
             )
             .join(cliente, on=(trabalhando.Trabalhando.cd_cliente == cliente.cd_cliente))
             .join(trabalh, on=(trabalhando.Trabalhando.cd_trabalho == trabalh.cd_trabalho))
-            # .where(trabalhando.Trabalhando.id_finalizado != True)
             .distinct()
         )
 
@@ -100,7 +150,6 @@ def consultarTrabalhosPesquisa(flt: list[ger.filtros]):
 
         return list(query)
 
-
     except OperationalError as e:
         print(f"❌ Erro ao conectar: {e}")
         return []
@@ -108,6 +157,57 @@ def consultarTrabalhosPesquisa(flt: list[ger.filtros]):
     finally:
         if not dtb.db.is_closed():
             dtb.db.close()
+
+
+# def consultarTrabalhosPesquisa(flt: list[ger.filtros]):
+#     cliente = cli.Cliente.alias()
+#     trabalh = trb.Trabalho.alias()
+
+#     filtros = []
+
+#     for no in flt:
+#         if no.campo == 'procurar' and no.valor and no.valor != '%':
+#             filtros.append(
+#                 cliente.nm_cliente.contains(no.valor) |
+#                 trabalh.nm_trabalho.contains(no.valor)
+#             )
+
+#     try:
+#         dtb.db.connect(reuse_if_open=True)
+
+#         query = (
+#             trabalhando.Trabalhando
+#             .select(
+#                 cliente.nm_cliente,
+#                 trabalh.nm_trabalho,
+#                 fn.FORMAT(trabalhando.Trabalhando.vl_trabalho, 2).alias('Valor'),
+#                 trabalhando.Trabalhando.dt_inicio.alias('DataInicio'),
+#                 trabalhando.Trabalhando.dt_finalizado.alias('DataFim'),
+#                 trabalhando.Trabalhando.id_status,
+#                 trabalhando.Trabalhando.cd_responsavel,
+#                 trabalhando.Trabalhando.cd_trabalhando.alias('Codigo')
+#             )
+#             .join(cliente, on=(trabalhando.Trabalhando.cd_cliente == cliente.cd_cliente))
+#             .join(trabalh, on=(trabalhando.Trabalhando.cd_trabalho == trabalh.cd_trabalho))
+#             # .where(trabalhando.Trabalhando.id_finalizado != True)
+#             .distinct()
+#         )
+
+#         if filtros:
+#             query = query.where(*filtros)
+
+#         query = query.order_by(trabalhando.Trabalhando.dt_inicio).dicts()
+
+#         return list(query)
+
+
+#     except OperationalError as e:
+#         print(f"❌ Erro ao conectar: {e}")
+#         return []
+
+#     finally:
+#         if not dtb.db.is_closed():
+#             dtb.db.close()
    
 
 def delete(codigo):
