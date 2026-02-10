@@ -48,12 +48,16 @@ def consultaTrabalhoDet(cd):
             query = query.where(*filtros)
 
         query = query.order_by(trabalhando.Trabalhando.dt_inicio).dicts()
+        print(query.sql())
 
         return list(query)
 
-    except OperationalError as e:
-        print(f"❌ Erro ao conectar: {e}")
-        return []
+    # except OperationalError as e:
+    #     print(f"❌ Erro ao conectar: {e}")
+    #     return []
+    except Exception as e:
+        raise
+
 
     finally:
         if not dtb.db.is_closed():
